@@ -7,14 +7,19 @@ const Login = () => {
   const [profile, setProfile] = useState(null);
 
   const login = useGoogleLogin({
-    onSuccess: (codeResponse) => setUser(codeResponse),
+    onSuccess: (codeResponse) => {
+      localStorage.setItem('accessToken', codeResponse.access_token);
+      setUser(codeResponse);
+    },
     onError: (error) => console.log("Login Failed:", error),
+    scope: "https://www.googleapis.com/auth/gmail.readonly"
   });
 
   const logOut = () => {
     googleLogout();
     setUser(null);
     setProfile(null);
+    localStorage.clear();
     console.log("Logged Out!");
   };
 
@@ -32,6 +37,8 @@ const Login = () => {
           }
         )
         .then((res) => {
+          console.log(res.data)
+          localStorage.setItem('user', JSON.stringify(res.data));
           setProfile(res.data);
         })
         .catch((err) => console.log(err));
@@ -46,7 +53,7 @@ const Login = () => {
       {profile && (
         <div>
           <img src={profile.picture} alt="user image" />
-          <h3>User Logged in</h3>
+          <h3>Our User</h3>
           <p>Name: {profile.name}</p>
           <p>Email Address: {profile.email}</p>
           <br />
