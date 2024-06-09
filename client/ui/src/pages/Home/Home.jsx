@@ -5,7 +5,6 @@ import parseMessage from 'gmail-api-parse-message';
 import { googleLogout } from "@react-oauth/google";
 import { useNavigate } from "react-router-dom";
 import "./Home.css"
-import { useOpenAIApi } from "../../../openAIConnect";
 import { getEmailsClassified } from "../../../geminiAI";
 
 const Home = () => {
@@ -15,9 +14,8 @@ const Home = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [maxRes, setMaxRes] = useState(10);
-  const [categories, setCategories] = useState([])
+  const [categories, setCategories] = useState(JSON.parse(localStorage.getItem('allCategories')))
   const navigate = useNavigate();
-  const { response, catErr, catLoading, callOpenAI } = useOpenAIApi();
 
   useEffect(() => {
     const fetchMailList = async () => {
@@ -30,7 +28,6 @@ const Home = () => {
             },
           }
         );
-        // console.log(response.data);
         const mailList = response.data.messages;
         await fetchAllMails(mailList);
       } catch (error) {
@@ -41,9 +38,7 @@ const Home = () => {
     };
 
     !allMails ? fetchMailList() : setLoading(false);
-    // localStorage.getItem('openAIApiKey') && setCategories[getEmailsClassified(allMails)];
-    const messages = "what color is the sky? ai amor ai amor"
-   getEmailsClassified(localStorage.getItem('openAIApiKey') || "", messages);
+
   }, []);
  
   const fetchAllMails = async (messageList) => {
@@ -79,7 +74,9 @@ const Home = () => {
       });
 
       await Promise.all(fetchPromises);
-  
+      const cats = await getEmailsClassified(localStorage.getItem('openAIApiKey') || "", messageDetails)
+      setCategories(cats);
+      localStorage.setItem("allCategories",  JSON.stringify(cats));
       setAllMails(messageDetails);
       localStorage.setItem("allMails", JSON.stringify(messageDetails));
     } catch (error) {
@@ -111,7 +108,9 @@ const Home = () => {
       <div key={index}>
         <p><strong>Message ID:</strong> {message.id}</p>
         <p><strong>Subject:</strong> {message.subject}</p>
+        <h1 className="category">Category: {categories[message.id]}</h1>
         <p>{message.textPlain}</p>
+        <br/>
         <EmailViewer htmlContent={message.htmlBody} />
         <hr />
       </div>
