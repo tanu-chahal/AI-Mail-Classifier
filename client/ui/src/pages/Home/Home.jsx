@@ -74,7 +74,7 @@ const Home = () => {
       });
 
       await Promise.all(fetchPromises);
-      const cats = await getEmailsClassified(localStorage.getItem('openAIApiKey') || "", messageDetails)
+      const cats = await getEmailsClassified(localStorage.getItem('googleAIApiKey') || "", messageDetails)
       setCategories(cats);
       localStorage.setItem("allCategories",  JSON.stringify(cats));
       setAllMails(messageDetails);

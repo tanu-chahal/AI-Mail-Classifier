@@ -19,7 +19,7 @@ const Login = () => {
   });
 
   const handleNavigation = () =>{
-    localStorage.setItem('openAIApiKey', openAIKey);
+    localStorage.setItem('googleAIApiKey', openAIKey);
     navigate('/home')
   }
 
