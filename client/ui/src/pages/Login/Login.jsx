@@ -1,10 +1,13 @@
 import { useState, useEffect } from "react";
 import { useGoogleLogin, googleLogout } from "@react-oauth/google";
 import axios from "axios";
+import {useNavigate} from "react-router-dom"
 
 const Login = () => {
   const [user, setUser] = useState(null);
-  const [profile, setProfile] = useState(null);
+  const [profile, setProfile] = useState(JSON.parse(localStorage.getItem('user')));
+  const [openAIKey, setopenAIKey] = useState(localStorage.getItem('openAIApiKey'))
+  const navigate = useNavigate();
 
   const login = useGoogleLogin({
     onSuccess: (codeResponse) => {
@@ -14,6 +17,11 @@ const Login = () => {
     onError: (error) => console.log("Login Failed:", error),
     scope: "https://www.googleapis.com/auth/gmail.readonly"
   });
+
+  const handleNavigation = () =>{
+    localStorage.setItem('openAIApiKey', openAIKey);
+    navigate('/home')
+  }
 
   const logOut = () => {
     googleLogout();
@@ -48,7 +56,6 @@ const Login = () => {
   return (
     <div>
       <button onClick={login}>O-Auth Login</button>
-      <button onClick={logOut}>Log out</button>
 
       {profile && (
         <div>
@@ -58,7 +65,9 @@ const Login = () => {
           <p>Email Address: {profile.email}</p>
           <br />
           <br />
-          <button onClick={logOut}>Log out</button>
+          <input type="text" onChange={(e)=>setopenAIKey(e.target.value)}  size={25}/>
+          {openAIKey && <button onClick={handleNavigation}>Classify Emails</button>}
+          <button onClick={logOut}>Log Out</button>
         </div>
       )}
     </div>
