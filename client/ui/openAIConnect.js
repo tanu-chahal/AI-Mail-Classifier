@@ -1,3 +1,4 @@
+// Hasn't been used: because its paid.
 import OpenAI from "openai";
 import  {useState} from "react"
 import axios from "axios"

@@ -1,12 +1,5 @@
+// Has not been used, coz OpenAI is paid.
 import {OpenAI} from "langchain/llms/openai";
-// import { ChatOpenAI } from "@langchain/openai";
-// import { HumanMessage, SystemMessage } from "@langchain/core/messages";
-
-// const model = new ChatOpenAI({
-//   model: "gpt-4",
-// //   openAIApiKey: JSON.parse(localStorage.getItem("openAIApiKey")),
-// });
-
 let llm = null
 
 export const getEmailsClassified = async (emailsData) => {
@@ -30,7 +23,6 @@ ${emailsData}
 const que= "What is the color of human blood"
   let res = "";
   try {
-    // res = await model.invoke(prompt);
     res = await llm.predict(que);
     console.log(res);
     return res;

@@ -1,6 +1,11 @@
 .homeContainer{
-    color: #1f1f1f;
-    color: red;
+    /* color: #1f1f1f; */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding: 50px 100px;
 }
 .category{
     color: blue;

@@ -14,7 +14,7 @@ const Home = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [maxRes, setMaxRes] = useState(10);
-  const [categories, setCategories] = useState(JSON.parse(localStorage.getItem('allCategories')))
+  const [categories, setCategories] = useState(JSON.parse(localStorage.getItem('allCategories')) || null)
   const navigate = useNavigate();
 
   useEffect(() => {
