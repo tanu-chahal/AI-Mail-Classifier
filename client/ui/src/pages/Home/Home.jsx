@@ -11,7 +11,6 @@ import Button from "../../components/Button/Button";
 import Typography from "@mui/material/Typography";
 import Slider from '@mui/material/Slider';
 import Pagination from '../../components/Pagination/Pagination';
-import Divider from '@mui/material/Divider';
 
 const Home = () => {
   const accessToken = localStorage.getItem("accessToken");
@@ -21,21 +20,17 @@ const Home = () => {
   );
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [maxRes, setMaxRes] = useState(30);
+  const [maxRes, setMaxRes] = useState(25);
   const [fetchCatTrigger, setFetchCatTrigger]= useState(false)
-  const [categories, setCategories] = useState();
+  const [nextPToken, setNextPToken] = useState("");
   const [pageCount, setPageCount] = useState(1);
   const [currentPage, setCurrentPage] = useState(1);
   const mailsPerPage = 5;
   const navigate = useNavigate();
-  const {aiResponse, aiError, aiLoading, getEmailsClassified}= useGoogleAI()
+  const {aiResponse, aiError, aiLoading, getEmailsClassified}= useGoogleAI();
 
   useEffect(() => {
-    // console.log(allMails)
     fetchMailList() 
-    // if (!aiResponse && allMails) {
-    //   fetchCategories(allMails);
-    // }
     setPageCount(Math.ceil(maxRes / mailsPerPage))
   }, []);
 
@@ -48,38 +43,30 @@ const Home = () => {
 
   const fetchMailList = async () => {
     try {
-      console.log(accessToken)
-      const nextPToken = localStorage.getItem('nextPageToken')
       const response = await axios.get(
-        `https://gmail.googleapis.com/gmail/v1/users/me/messages?maxResults=${maxRes}&includeSpamTrash=true${nextPToken?("&pageToken="+nextPToken):""}`,
+        `https://gmail.googleapis.com/gmail/v1/users/me/messages?maxResults=${(maxRes-allMails.length)}&includeSpamTrash=true${nextPToken?("&pageToken="+nextPToken):""}`,
         {
           headers: {
             Authorization: `Bearer ${accessToken}`,
           },
         }
       );
-      response.data.nextPageToken && localStorage.setItem('nextPageToken', response.data.nextPageToken)
+      response.data.nextPageToken && setNextPToken(response.data.nextPageToken)
       const mailList = response.data.messages;
       await fetchAllMails(mailList);
     } catch (error) {
-      setError(error.message);
+      console.log(error.response.data.error.code)
+      setError(error.response.data.error.code);
     } finally {
       setLoading(false);
     }
   };
 
-  // useEffect(()=>{console.log("allMails: "+allMails)},[allMails])
-
   const fetchCategories = async (mails) => {
-    // let cats = undefined;
-    // while (!cats) {
      getEmailsClassified(
       localStorage.getItem("googleAIApiKey"),
-      mails
+      mails, aiResponse
     );
-    // cats && setCategories(cats);
-    // cats && localStorage.setItem("allCategories", JSON.stringify(cats));
-    // }
   };
 
   const fetchAllMails = async (messageList) => {
@@ -117,8 +104,7 @@ const Home = () => {
 
       await Promise.all(fetchPromises);
       fetchCategories(messageDetails);
-      setAllMails(messageDetails);
-      // localStorage.setItem("allMails", JSON.stringify(messageDetails));
+      setAllMails(p=>p.concat(messageDetails));
     } catch (error) {
       setError(error.message);
     }
@@ -136,7 +122,9 @@ const Home = () => {
     if(newValue>=allMails.length){
       fetchMailList()
    }
-   setPageCount(Math.ceil(newValue/mailsPerPage));
+   const newPCnt = Math.ceil(newValue/mailsPerPage)
+   setPageCount(newPCnt);
+   currentPage>newPCnt && setCurrentPage(newPCnt);
   };
 
   const handlePageChange = (event, value) => {
@@ -158,7 +146,8 @@ const Home = () => {
   }
 
   if (error) {
-    return <div className="homeContainer">Error: {error}</div>;
+    if(error==401) logOut();
+    return <div className="homeContainer">Oops, something went wrong.</div>;
   }
 
 
@@ -185,9 +174,9 @@ const Home = () => {
         <div className="mailsSectionHeader">
         <Typography color="primary" variant="h3" component="h1">Gmail Messages</Typography>
         <div className="maxResultsSlider">
-        <Slider value={maxRes} aria-label="Maximum Results" valueLabelDisplay="auto" onChange={(event, newValue) => setMaxRes(newValue)}
-        onChangeCommitted={handleSliderChangeCommitted} />
-         <Typography color="primary" variant="subtitle2" component="h1" sx={{width:'100px'}}>{maxRes} Results</Typography>
+        <Slider min={1} max={allMails.length + 25} value={maxRes} aria-label="Maximum Results" valueLabelDisplay="auto" onChange={(event, newValue) => setMaxRes(newValue)}
+        onChangeCommitted={handleSliderChangeCommitted} disabled={aiLoading || aiError} />
+         <Typography color="primary" variant="subtitle2" component="h1" sx={{width:'100px'}}>{aiLoading|| aiError ? "wait.." : (maxRes+" Results")}</Typography>
         </div>
         
         </div>
@@ -198,21 +187,11 @@ const Home = () => {
             <MailSnippetCard
               subject={message.subject}
               snippet={message.snippet}
-              // category={categories ? categories[message.id] : "Retry"}
               category={getSingleCategory(message.id)}
               date={message.date}
               setTrigger={setFetchCatTrigger}
             />
-            {/* <p>
-            <strong>Message ID:</strong> {message.id}
-          </p>
-          <p>
-            <strong>Subject:</strong> {message.subject}
-          </p>
-          {categories && (
-            <h1 className="category">Category: {categories[message.id]}</h1>
-          )}
-          <p>{message.textPlain}</p>
+            {/*
          
           <EmailViewer htmlContent={message.htmlBody} />
         */}

@@ -6,7 +6,7 @@ export const useGoogleAI=()=>{
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  const getEmailsClassified = async (apiKey,emailsData) => {
+  const getEmailsClassified = async (apiKey,emailsData, oldRes) => {
     setLoading(true);
     const genAI = new GoogleGenerativeAI(apiKey);
     const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash", generation_config: {"response_mime_type": "application/json"}});
@@ -30,17 +30,16 @@ export const useGoogleAI=()=>{
       console.log("Gemini writing...")
       const result = await model.generateContent([prompt, JSON.stringify(emailsData)]);
       // console.log(result)
-      const response = result.response;
+      const res = result.response;
       // console.log(response)
-      const text = response.text();
+      const text = res.text();
       let jsonObj = JSON.parse(text);
       // console.log(jsonObj);
       // console.log(text);
       console.log("Successfully classified mails.")
       setError(null);
-      setResponse(jsonObj)
-      // return jsonObj;
-
+      const newRes = oldRes ? {...oldRes,...jsonObj} : jsonObj;
+      setResponse(newRes)
     } catch (err) {
       console.log(err);
       setError(err.response ? err.response.data : err.message);
