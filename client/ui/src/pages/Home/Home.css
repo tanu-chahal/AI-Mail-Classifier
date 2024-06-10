@@ -8,7 +8,7 @@
     padding: 100px 150px;
     background-color: #1f1f1f;
     min-height: 100vh;
-    gap:100px;
+    gap:50px;
 }
 .header{
     display: flex;
@@ -26,11 +26,14 @@
     display: flex;
     flex-direction: column;
     gap: 50px;
+    width: 100%;
+    align-items: center;
 }
 .mailsSectionHeader{
     display: flex;
     flex-direction: column;
     gap: 20px;
+    width: 100%;
 }
 .maxResultsSlider{
     display: flex;

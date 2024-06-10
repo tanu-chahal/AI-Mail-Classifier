@@ -1,4 +1,4 @@
-// Hasn't been used: because its paid.
+// Hasn't been used: because got to know it doesn't offer any free tier.
 import OpenAI from "openai";
 import  {useState} from "react"
 import axios from "axios"
@@ -9,7 +9,6 @@ export const useOpenAIApi = () => {
   const [loading, setLoading] = useState(false);
 
   const callOpenAI = async (apiKey, messages, model = "gpt-3.5-turbo", temperature = 0.7) => {
-    console.log("llolll")
     const openai = new OpenAI({
         organization: import.meta.env.VITE_ORG_ID,
         project: import.meta.env.VITE_PROJ_ID,
@@ -18,7 +17,6 @@ export const useOpenAIApi = () => {
     });
     setLoading(true);
     try {
-        console.log("lol2")
       const result = await axios.post(
         'https://api.openai.com/v1/chat/completions',
         {

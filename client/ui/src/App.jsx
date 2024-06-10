@@ -3,7 +3,6 @@ import './App.css'
 import Login from "./pages/Login/Login";
 import Home from "./pages/Home/Home";
 import { GoogleOAuthProvider } from "@react-oauth/google";
-import GmailComponent from "./components/GmailComponent/GmailComponent";
 import { ThemeProvider } from '@mui/material/styles';
 import theme from './utils/theme.js';
 import ProtectedRoute from "./utils/ProtectedRoute"

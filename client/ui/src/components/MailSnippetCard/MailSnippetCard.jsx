@@ -10,7 +10,8 @@ const categoryColors = {
     Social: 'blue',
     Marketing: 'yellow',
     General: 'blue',
-    Spam: 'red'
+    Spam: 'red',
+    Retry: 'red'
   };
 
 const MailSnippetCard = ({subject, snippet, date, category, setTrigger}) => {
@@ -32,7 +33,7 @@ const MailSnippetCard = ({subject, snippet, date, category, setTrigger}) => {
             </Typography>
             </div>
 
-        <Typography color={categoryColors[category] || "red"} variant="h6" component="h1" sx={{fontWeight:400}} onClick={handleFetchCategory}>
+        <Typography color={categoryColors[category] || "grey"} variant="h6" component="h1" sx={{fontWeight:400}} onClick={handleFetchCategory}>
              {category}
         </Typography>
         </div>  

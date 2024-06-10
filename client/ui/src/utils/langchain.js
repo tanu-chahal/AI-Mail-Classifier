@@ -1,4 +1,4 @@
-// Has not been used, coz OpenAI is paid.
+// Has not been used, coz OpenAI is paid, also my langchain version is deprecated LOL.
 import {OpenAI} from "langchain/llms/openai";
 let llm = null
 
