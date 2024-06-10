@@ -1,0 +1,33 @@
+.Login{
+    display: flex;
+    width: 100%;
+    height: 100vh;
+    align-items: center;
+    justify-content: center;
+    background-color: #1f1f1f;
+    color: white;
+}
+.greetingContainer{
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    justify-content: center;
+    align-items: center;
+}
+.profilePic{
+    border-radius: 50%;
+    border: 4px solid #c1dcdc;
+    width: 75px;
+    height: 75px;
+}
+.userProfile{
+    display: flex;
+    gap: 20px;
+    align-items: center;
+}
+.apiKeyInput{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: 10px;
+}

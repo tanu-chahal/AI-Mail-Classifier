@@ -1,6 +1,7 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
 export const getEmailsClassified = async (apiKey,emailsData) => {
+  console.log("Connecting to GeminiAI")
   const genAI = new GoogleGenerativeAI(apiKey);
   const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash", generation_config: {"response_mime_type": "application/json"}});
 
@@ -15,17 +16,19 @@ General: If none of the above are matched, use Generaal.
 You can classify emails into categories based in emailsData provide. Read mail's subject, from, snippet, body, labelIds and then decide in which category one mail must fall into.
 
 Important: Give the JSON ouput striclty with this schema: {"id-of-first-mail": "category-of-first-mail", "id-of-second-mail": "category-of-second-mail",...} & so on.
+Kindly don't give any other text than json in output. It's a super strict requirement, kindly follow the schema.
 `
 
 
   try{
+    console.log("Fetching Classifications")
     const result = await model.generateContent([prompt, JSON.stringify(emailsData)]);
     // console.log(result)
     const response = result.response;
     // console.log(response)
     const text = response.text();
     let jsonObj = JSON.parse(text);
-console.log(jsonObj);
+    console.log(jsonObj);
     console.log(text);
     return jsonObj;
   } catch (err) {
