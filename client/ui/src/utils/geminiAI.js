@@ -11,15 +11,15 @@ Promotions: Emails related to sales, discounts, and marketing campaigns.
 Social: Emails from social networks, friends, and family.
 Marketing: Emails related to marketing, newsletters, and notifications.
 Spam: Unwanted or unsolicited emails.
-General: If none of the above are matched, use Generaal.
+General: If none of the above are matched, use General.
 
-You can classify emails into categories based in emailsData provide. Read mail's subject, from, snippet, body, labelIds and then decide in which category one mail must fall into.
-
-Important: Give the JSON ouput striclty with this schema: {"id-of-first-mail": "category-of-first-mail", "id-of-second-mail": "category-of-second-mail",...} & so on.
-Kindly don't give any other text than json in output. It's a super strict requirement, kindly follow the schema.
+Strict Rules (that must be followed in every circumstance):
+1. Classify emails into categories based on emailsData provided. Read each mail's subject, from, snippet, body, labelIds and then decide in which category one mail must fall into.
+2. Only one of 6 six valid categories is acceptable, the possible categories are: "Important", "Promotions","Social", "Marketing","Spam","General"
+3. Give the JSON ouput striclty with this schema: {"id-of-first-mail": "category-of-first-mail", "id-of-second-mail": "category-of-second-mail",...} & so on.
+4. Don't give any text other than json in output. It's a super strict requirement, kindly follow the schema. 
+5. Don't miss any mail, return a category for each and every mail sent in emailsData. The number of json key value pairs must be equal to the lengthof emailsData sent.
 `
-
-
   try{
     console.log("Fetching Classifications")
     const result = await model.generateContent([prompt, JSON.stringify(emailsData)]);

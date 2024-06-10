@@ -6,16 +6,23 @@ import { googleLogout } from "@react-oauth/google";
 import { useNavigate } from "react-router-dom";
 import "./Home.css";
 import { getEmailsClassified } from "../../utils/geminiAI";
+import MailSnippetCard from "../../components/MailSnippetCard/MailSnippetCard";
+import Button from "../../components/Button/Button";
+import Typography from "@mui/material/Typography";
+import Slider from '@mui/material/Slider';
 
 const Home = () => {
   const accessToken = localStorage.getItem("accessToken");
   const [allMails, setAllMails] = useState(
     JSON.parse(localStorage.getItem("allMails"))
   );
-  const [profileData, setProfileData] = useState(null);
+  const [profile, setProfile] = useState(
+    JSON.parse(localStorage.getItem("user"))
+  );
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [maxRes, setMaxRes] = useState(10);
+  const [maxRes, setMaxRes] = useState(25);
+  const [fetchCatTrigger, setFetchCatTrigger]= useState(false)
   const [categories, setCategories] = useState(
     JSON.parse(localStorage.getItem("allCategories")) || null
   );
@@ -47,15 +54,24 @@ const Home = () => {
     }
   }, []);
 
+  useEffect(()=>{console.log("maxRes: "+maxRes)},[maxRes])
+
+  useEffect(()=>{
+    if(fetchCatTrigger){ 
+      fetchCategories(allMails)
+      setFetchCatTrigger(false)
+    }
+  },[fetchCatTrigger])
+
   const fetchCategories = async (mails) => {
     let cats = undefined;
     // while (!cats) {
-      cats = await getEmailsClassified(
-        localStorage.getItem("googleAIApiKey"),
-        mails
-      );
-      cats && setCategories(cats);
-      cats && localStorage.setItem("allCategories", JSON.stringify(cats));
+    cats = await getEmailsClassified(
+      localStorage.getItem("googleAIApiKey"),
+      mails
+    );
+    cats && setCategories(cats);
+    cats && localStorage.setItem("allCategories", JSON.stringify(cats));
     // }
   };
 
@@ -92,16 +108,7 @@ const Home = () => {
       });
 
       await Promise.all(fetchPromises);
-      // let cats = undefined;
-      // while (!cats) {
-      //   cats = await getEmailsClassified(
-      //     localStorage.getItem("googleAIApiKey"),
-      //     messageDetails
-      //   );
-      //   cats && setCategories(cats);
-      //   cats && localStorage.setItem("allCategories", JSON.stringify(cats));
-      // }
-      fetchCategories(messageDetails)
+      fetchCategories(messageDetails);
       setAllMails(messageDetails);
       localStorage.setItem("allMails", JSON.stringify(messageDetails));
     } catch (error) {
@@ -116,21 +123,61 @@ const Home = () => {
     navigate("/");
   };
 
+  const handleSliderChangeCommitted = (event, newValue) => {
+    console.log("Slider Change Commited.")
+    setMaxRes(newValue);
+    // debouncedFetchMails(newValue);
+  };
+
   if (loading) {
-    return <div>Loading...</div>;
+    return <div className="homeContainer">Loading...</div>;
   }
 
   if (error) {
-    return <div>Error: {error}</div>;
+    return <div className="homeContainer">Error: {error}</div>;
   }
+
 
   return (
     <div className="homeContainer">
-      <button onClick={logOut}>Log Out</button>
-      <h2>Gmail Messages</h2>
-      {allMails.map((message, index) => (
-        <div key={index}>
-          <p>
+      <div className="header">
+        <div className="profileOfUser">
+          <img className="profilePic" src={profile.picture} alt="user image" />
+          <div>
+            <Typography color="white" variant="h6" component="h1">
+              {profile.name}
+            </Typography>
+            <Typography color="primary" variant="subtitle3" component="h1">
+              {profile.email}
+            </Typography>
+          </div>
+        </div>
+        <Button onClick={logOut}>Log Out</Button>
+      </div>
+
+      <div className="mailsSection">
+
+        <div className="mailsSectionHeader">
+        <Typography color="primary" variant="h3" component="h1">Gmail Messages</Typography>
+        <div className="maxResultsSlider">
+        <Slider value={maxRes} aria-label="Maximum Results" valueLabelDisplay="auto" onChange={(event, newValue) => setMaxRes(newValue)}
+        onChangeCommitted={handleSliderChangeCommitted} />
+         <Typography color="primary" variant="subtitle2" component="h1" sx={{width:'100px'}}>{maxRes} Results</Typography>
+        </div>
+        
+        </div>
+
+      <div className="mailSnippets">
+        {allMails.map((message, index) => (
+          <div key={message.id}>
+            <MailSnippetCard
+              subject={message.subject}
+              snippet={message.snippet}
+              category={categories[message?.id] ? categories[message.id] : "Retry"}
+              date={message.date}
+              setTrigger={setFetchCatTrigger}
+            />
+            {/* <p>
             <strong>Message ID:</strong> {message.id}
           </p>
           <p>
@@ -140,11 +187,14 @@ const Home = () => {
             <h1 className="category">Category: {categories[message.id]}</h1>
           )}
           <p>{message.textPlain}</p>
-          <br />
+         
           <EmailViewer htmlContent={message.htmlBody} />
-          <hr />
-        </div>
-      ))}
+        */}
+          </div>
+        ))}
+      </div>
+
+      </div>
     </div>
   );
 };

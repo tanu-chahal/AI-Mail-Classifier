@@ -74,7 +74,7 @@ const Login = () => {
             </Typography>
             <img
               className="profilePic"
-              src={profile.picture}
+              src={profile.picture || "/assets/user-profile.svg"}
               alt="user image"
             />
           </div>

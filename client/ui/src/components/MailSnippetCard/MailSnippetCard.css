@@ -1,0 +1,13 @@
+.cardHeader{
+    display: flex;
+    justify-content: space-between;
+    align-items: start;
+}
+.cardTitle{
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+.fullMailLink{
+    color: blue;
+}
