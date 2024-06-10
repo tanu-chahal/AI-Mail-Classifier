@@ -1,10 +1,30 @@
+.mailContainer{
+    position: absolute;
+    top: 50%;
+    left:50%;
+    transform: translate(-50%, -50%);
+    width: fit-content;
+    background-color: white;
+    border: 2px solid #000;
+    height: 500px;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    align-items: center;
+    justify-content: center;
+}
+.mailData{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
 .singleMail{
     border: 2px solid #1f1f1f;
-    border-radius: 10px;
-    padding: 100px 20px;
-    max-height: 300px;
-    overflow-y: scroll;
-    width: 800px;
+    overflow: scroll;
     display: flex;
     justify-content: center;
+    height: 100%;
+    width: 100%;
+    padding: 10px 20px;
 }

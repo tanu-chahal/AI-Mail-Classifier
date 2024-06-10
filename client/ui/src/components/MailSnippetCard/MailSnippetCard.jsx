@@ -39,10 +39,12 @@ const MailSnippetCard = ({subject, snippet, date, category, setTrigger}) => {
         </div>  
 
         <Divider color="white"/>
+        {/* <div className="mailSnippetBody"> */}
         <Typography color="white" variant="subtitle2" component="h2">
              {snippet}
         </Typography>
-        <span className="fullMailLink">...more</span>
+        {/* <span className="fullMailLink">...more</span>
+        </div> */}
         </Card>
     </div>
   )

@@ -15,9 +15,7 @@ import Pagination from '../../components/Pagination/Pagination';
 const Home = () => {
   const accessToken = localStorage.getItem("accessToken");
   const [allMails, setAllMails] = useState([]);
-  const [profile, setProfile] = useState(
-    JSON.parse(localStorage.getItem("user"))
-  );
+  const profile=JSON.parse(localStorage.getItem("user"))
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [maxRes, setMaxRes] = useState(25);
@@ -25,6 +23,7 @@ const Home = () => {
   const [nextPToken, setNextPToken] = useState("");
   const [pageCount, setPageCount] = useState(1);
   const [currentPage, setCurrentPage] = useState(1);
+  const [fullMailView, setFullMailView] = useState("");
   const mailsPerPage = 5;
   const navigate = useNavigate();
   const {aiResponse, aiError, aiLoading, getEmailsClassified}= useGoogleAI();
@@ -150,10 +149,8 @@ const Home = () => {
     return <div className="homeContainer">Oops, something went wrong.</div>;
   }
 
-
   return (
     <div className="homeContainer">
-      
       <div className="header">
         <div className="profileOfUser">
           <img className="profilePic" src={profile.picture} alt="user image" />
@@ -183,7 +180,7 @@ const Home = () => {
 
       <div className="mailSnippets">
         {allMails.slice(0,maxRes).slice((currentPage - 1) * mailsPerPage, (currentPage - 1) * mailsPerPage + mailsPerPage).map((message, index) => (
-          <div key={message.id}>
+          <div key={message.id} onClick={()=>setFullMailView(message.id)}>
             <MailSnippetCard
               subject={message.subject}
               snippet={message.snippet}
@@ -191,15 +188,13 @@ const Home = () => {
               date={message.date}
               setTrigger={setFetchCatTrigger}
             />
-            {/*
-         
-          <EmailViewer htmlContent={message.htmlBody} />
-        */}
           </div>
         ))}
       </div>
 
       <Pagination totalPages={pageCount} currentPage={currentPage} onPageChange={handlePageChange} />
+
+      {fullMailView &&   <EmailViewer mail={allMails.find(m=>m.id===fullMailView)} open={fullMailView?true:false} handleClose={()=>setFullMailView("")}/> }
 
       </div>
     </div>
