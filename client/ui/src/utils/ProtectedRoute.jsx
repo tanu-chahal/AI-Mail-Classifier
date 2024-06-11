@@ -11,7 +11,7 @@ const ProtectedRoute = ({children}) => {
     useEffect(() => {
         const timeoutId = setTimeout(() => {
           setTimeoutElapsed(true);
-        }, 5000);
+        }, 3000);
         return () => clearTimeout(timeoutId);
       }, []);
 
@@ -22,7 +22,7 @@ const ProtectedRoute = ({children}) => {
   }, [user, timeoutElapsed]);
 
   if (loading) {
-    return <div style={{height:"80vh", display:"flex", alignItems:"center", justifyContent:"center"}}><CircularProgress /></div>;
+    return <div style={{height:"100vh", width: '100%', display:"flex", alignItems:"center", justifyContent:"center", backgroundColor: '#1f1f1f'}}><CircularProgress /></div>;
   }
   if(!user){
         return <Navigate to="/" state={{ path: location.pathname}}/>

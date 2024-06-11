@@ -6,6 +6,7 @@ import { GoogleOAuthProvider } from "@react-oauth/google";
 import { ThemeProvider } from '@mui/material/styles';
 import theme from './utils/theme.js';
 import ProtectedRoute from "./utils/ProtectedRoute"
+import NoMatch from "./components/NoMatch/NoMatch.jsx";
 
 function App() {
   const Layout = () => {
@@ -32,6 +33,10 @@ function App() {
         {
           path: "/home",
           element:<ProtectedRoute><Home /></ProtectedRoute>,
+        },
+        {
+          path: "*",
+          element: <NoMatch/>
         },
       ]
     }
