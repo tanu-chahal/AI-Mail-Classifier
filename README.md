@@ -2,7 +2,7 @@
 
 This is the AI-Mail-Classifier App, a web application for classifying emails using GeminiAI.
 
-Live [here](https://ai-mail-classifier.netlify.app/home)
+Live [here](https://ai-mail-classifier.netlify.ap)
 
 **Note:** Only the users added as test users will be able to login, the google OAuth application is in testing mode for now. Contact me if you wanna test it out.
 
